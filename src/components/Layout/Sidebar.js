@@ -6,20 +6,23 @@ import {
   ListItem,
   ListItemButton,
   ListItemText,
-  Toolbar,
   Typography,
   Accordion,
   AccordionSummary,
   AccordionDetails,
   Chip,
+  IconButton,
+  InputBase,
 } from '@mui/material';
 import ExpandMoreIcon from '@mui/icons-material/ExpandMore';
-import { NavLink, useLocation } from 'react-router-dom';
+import { NavLink, useLocation, useNavigate } from 'react-router-dom';
 import menuConfig from 'src/components/menuConfig';
+import AddIcon from '@mui/icons-material/Add';
+import SearchIcon from '@mui/icons-material/Search';
 
 function Sidebar({ drawerWidth, mobileOpen, onClose }) {
   const location = useLocation();
-
+  const navigate = useNavigate();
   const isPathActive = (node) => {
     if (node.path === location.pathname) return true;
     if (node.children) {
@@ -29,6 +32,8 @@ function Sidebar({ drawerWidth, mobileOpen, onClose }) {
   };
 
   const renderNode = (node, level = 0) => {
+    const paddingLeft = 2 + level * 2;
+
     // API endpoint
     if (node.path) {
       return (
@@ -37,9 +42,15 @@ function Sidebar({ drawerWidth, mobileOpen, onClose }) {
             component={NavLink}
             to={node.path}
             sx={{
-              pl: 2 + level * 2,
+              pl: paddingLeft,
+              py: 0.75,
+              borderLeft: '3px solid transparent',
               '&.active': {
-                backgroundColor: 'action.selected',
+                borderLeftColor: 'primary.main',
+                backgroundColor: 'transparent',
+              },
+              '&:hover': {
+                backgroundColor: 'action.hover',
               },
             }}
           >
@@ -47,32 +58,63 @@ function Sidebar({ drawerWidth, mobileOpen, onClose }) {
               <Chip
                 label={node.method}
                 size="small"
+                variant="outlined"
                 color={
-                  node.method === 'POST'
-                    ? 'warning'
-                    : node.method === 'GET'
-                      ? 'success'
+                  node.method === 'GET'
+                    ? 'success'
+                    : node.method === 'POST'
+                      ? 'warning'
                       : 'primary'
                 }
-                sx={{ mr: 1 }}
+                sx={{
+                  mr: 1,
+                  height: 20,
+                  fontSize: '0.65rem',
+                }}
               />
             )}
-            <ListItemText primary={node.label} />
+
+            <ListItemText
+              primary={node.label}
+              primaryTypographyProps={{
+                fontSize: '0.85rem',
+                fontWeight: 400,
+              }}
+            />
           </ListItemButton>
         </ListItem>
       );
     }
 
-    // Folder / Group
+    // Folder
     return (
       <Accordion
         key={node.title}
         disableGutters
         elevation={0}
+        square
         defaultExpanded={isPathActive(node)}
+        sx={{
+          '&:before': { display: 'none' },
+        }}
       >
-        <AccordionSummary expandIcon={<ExpandMoreIcon />}>
-          <Typography fontWeight={600} sx={{ pl: level * 2 }}>
+        <AccordionSummary
+          expandIcon={<ExpandMoreIcon sx={{ fontSize: 18 }} />}
+          sx={{
+            minHeight: 36,
+            '& .MuiAccordionSummary-content': {
+              margin: 0,
+            },
+          }}
+        >
+          <Typography
+            sx={{
+              pl: level * 2,
+              fontSize: '0.8rem',
+              fontWeight: 600,
+              color: 'text.secondary',
+            }}
+          >
             {node.title}
           </Typography>
         </AccordionSummary>
@@ -88,11 +130,59 @@ function Sidebar({ drawerWidth, mobileOpen, onClose }) {
 
   const drawer = (
     <Box>
-      <Toolbar>
-        <Typography variant="h6">API Docs</Typography>
-      </Toolbar>
+      {/* Top Actions */}
+      <Box
+        sx={{
+          px: 1,
+          py: 1,
+          display: 'flex',
+          alignItems: 'center',
+          gap: 1,
+          borderBottom: '1px solid',
+          borderColor: 'divider',
+          position: 'sticky',
+          top: 0,
+          backgroundColor: 'background.paper',
+          zIndex: 1,
+        }}
+      >
+        {/* Add Button */}
+        <IconButton size="small">
+          <AddIcon
+            fontSize="small"
+            onClick={() => {
+              navigate('/api-docs/create');
+            }}
+          />
+        </IconButton>
 
-      <List>{menuConfig.map((node) => renderNode(node))}</List>
+        {/* Search */}
+        <Box
+          sx={{
+            flex: 1,
+            display: 'flex',
+            alignItems: 'center',
+            px: 1,
+            py: 0.5,
+            border: '1px solid',
+            borderColor: 'divider',
+            borderRadius: 1,
+          }}
+        >
+          <SearchIcon sx={{ fontSize: 18, mr: 1, color: 'text.secondary' }} />
+
+          <InputBase
+            placeholder="Search collections"
+            sx={{
+              fontSize: '0.85rem',
+              width: '100%',
+            }}
+          />
+        </Box>
+      </Box>
+
+      {/* Sidebar Tree */}
+      <List disablePadding>{menuConfig.map((node) => renderNode(node))}</List>
     </Box>
   );
 

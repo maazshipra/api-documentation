@@ -4,8 +4,8 @@ const menuConfig = [
     type: 'group',
     children: [
       { label: 'Introduction', path: '/' },
-      { label: 'Getting Started', path: '/getting-started' },
-      { label: 'Errors and Response Codes', path: '/errors' },
+      { label: 'Getting Started', path: '/' },
+      { label: 'Errors and Response Codes', path: '/' },
     ],
   },
   {
@@ -19,12 +19,12 @@ const menuConfig = [
           {
             method: 'POST',
             label: 'Generate Token',
-            path: '/auth/token',
+            path: '/',
           },
           {
             method: 'POST',
             label: 'Logout',
-            path: '/auth/logout',
+            path: '/',
           },
         ],
       },
@@ -41,12 +41,12 @@ const menuConfig = [
           {
             method: 'POST',
             label: 'Create Order',
-            path: '/orders/create',
+            path: '/',
           },
           {
             method: 'PUT',
             label: 'Update Order',
-            path: '/orders/update',
+            path: '/',
           },
         ],
       },
@@ -57,7 +57,7 @@ const menuConfig = [
           {
             method: 'GET',
             label: 'Get Order',
-            path: '/orders/get',
+            path: '/',
           },
         ],
       },
